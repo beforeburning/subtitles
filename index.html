@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/x-icon" href="https://www.jiankang.com/favicon.ico" />
+    <title>Title</title>
+</head>
+<body>
+<style>
+    /*公共样式*/
+    a, input, textarea, audio, button {outline: 0}
+
+    input {border: 0;}
+
+    article, aside, audio, body, dd, div, dl, footer, form, h1, h2, h3, h4, h5, h6, header, iframe, input, label, nav, ol, p, section, select, td, textarea, th, time, ul, video {margin: 0;padding: 0}
+
+    article, aside, audio, canvas, footer, header, nav, section, video {display: block}
+
+    body {font: 14px/1.5 '-apple-system', BlinkMacSystemFont, Roboto, Ubuntu, "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Source Han Sans CN", sans-serif;background: #fff}
+
+    em, i, sub, sup {font-style: normal}
+
+    textarea {resize: none}
+
+    button, input {-webkit-appearance: none}
+
+    iframe, img {border: 0}
+
+    li, ol, ul {list-style: none}
+
+    a {text-decoration: none;list-style-type: none;color: #333}
+
+    h1, h2, h3, strong {font-weight: 400}
+
+    .clearfix:after {content: ".";display: block;height: 0;clear: both;visibility: hidden}
+
+    .clearfix {zoom: 1}
+
+    sub, sup {vertical-align: baseline}
+
+</style>
+<style>
+    /*css动画*/
+    .loading {position: fixed;width: 100%;height: 100%;left: 0;top: 0;background: rgba(0, 0, 0, .6);z-index: 99999}
+
+    .spinner {margin: 35% auto 0 auto;width: 50px;height: 60px;text-align: center;font-size: 10px;}
+
+    .spinner > div {background-color: #67CF22;height: 100%;width: 6px;display: inline-block;-webkit-animation: stretchdelay 1.2s infinite ease-in-out;animation: stretchdelay 1.2s infinite ease-in-out;}
+
+    .spinner .rect2 {-webkit-animation-delay: -1.1s;animation-delay: -1.1s;}
+
+    .spinner .rect3 {-webkit-animation-delay: -1.0s;animation-delay: -1.0s;}
+
+    .spinner .rect4 {-webkit-animation-delay: -0.9s;animation-delay: -0.9s;}
+
+    .spinner .rect5 {-webkit-animation-delay: -0.8s;animation-delay: -0.8s;}
+
+    @-webkit-keyframes stretchdelay {
+      0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+      20% { -webkit-transform: scaleY(1.0) }
+    }
+
+    @keyframes stretchdelay {
+      0%, 40%, 100% {transform: scaleY(0.4);-webkit-transform: scaleY(0.4)}
+      20% {transform: scaleY(1.0);-webkit-transform: scaleY(1.0);}
+    }
+
+    /*页面样式*/
+    .content {width: 800px;margin: 50px auto;overflow: hidden}
+
+    .table, .audio, #audio, #video, .btn {float: left;width: 100%;}
+
+    .table {border: 1px solid #ddd;margin-top: 30px;box-sizing: border-box}
+
+    .line {float: left;width: 100%;height: 40px;line-height: 40px;border-bottom: 1px solid #ddd}
+
+    .line:last-child {border-bottom: 0}
+
+    .serial {float: left;width: 5%;text-align: center;}
+
+    .start {float: left;width: 15%;cursor: pointer}
+
+    .end {float: left;width: 15%;cursor: pointer}
+
+    .text {float: left;width: 65%;line-height: 40px;height: 40px;}
+
+    .btn {margin-top: 30px;}
+
+    #btn {float: right;width: 80px;height: 40px;font-size: 16px;background: #3ca3f7;border: 0;color: white;border-radius: 5px;cursor: pointer}
+
+    .highlighted {background: yellow}
+
+    .highlighted input {background: yellow}
+</style>
+
+<div class="loading">
+  <div class="spinner">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+  </div>
+</div>
+
+<div class="content">
+    <div class="audio">
+      <video id="video" src="mp4/demo.mp4" controls preload />
+          您的浏览器不支持 video 标签。
+      </video>
+    </div>
+    <div class="table" data-id="1"></div>
+    <div class="btn">
+      <button id="btn">提交</button>
+    </div>
+</div>
+<script>
+  var dataAjaxUrl = './php/demo.php';
+  var dataSubmitUrl = './php/dataSubmit.php';
+</script>
+<script src="./js/index.min.js"></script>
+</body>
+</html>
