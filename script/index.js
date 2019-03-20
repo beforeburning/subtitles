@@ -32,12 +32,11 @@ const audioTime = e => {
   DomId('video').play();
 };
 
+// 暂停视频  video.paused true是播放  false是暂停
+const suspended = () => video.paused ? DomId('video').play() : DomId('video').pause();
+
 // 三位小数补全
-const completion = (e = '0') => {
-  return e.substring(0, 3).length === 3 ? e.substring(0, 3) :
-    (e.substring(0, 3).length === 2 ? `${e.substring(0, 3)}0` :
-      (e.substring(0, 3).length === 1 ? `${e.substring(0, 3)}00` : e));
-};
+const completion = (e = '0') => e.substring(0, 3).length === 3 ? e.substring(0, 3) : (e.substring(0, 3).length === 2 ? `${e.substring(0, 3)}0` : (e.substring(0, 3).length === 1 ? `${e.substring(0, 3)}00` : e));
 
 // 时间换算
 const MillisecondToDate = msd => {
@@ -55,21 +54,21 @@ const MillisecondToDate = msd => {
 // 时间分割 返回分割后第一条数据的结束时间 第二条数据的开始时间是第一条数据的结束时间
 const newTime = (timeStart, intervalPrev) => MillisecondToDate(timeStart + intervalPrev);
 
+// 点击loading 效果消失
+DomClass('loading').onclick = e => e.target.style.display = 'none';
+
 // 总数据
 let set = [];
 
 // 方法开始
 window.onload = () => {
   (() => {
-    localStorage.setItem('video', false);
     // 获取数据的id 请求数据
     let dataId = DomClass('table').dataset.id;
     if (!dataId) {
       alert('ID错误,请联系管理员查看');
       return false;
     }
-    // video dom
-    let video = DomId('video');
     // 拿到数据
     ajax(dataId, dataAjaxUrl, res => {
       // 数据处理
@@ -87,12 +86,10 @@ window.onload = () => {
       drawing();
       // 监听视频播放
       video.addEventListener('play', () => {
-        localStorage.setItem('video', true);
         highlighted();
       });
       // 监听视频暂停 停止计时器
       video.addEventListener('pause', () => {
-        localStorage.setItem('video', false);
         clearTimeout(window.timing);
       });
     });
@@ -117,7 +114,7 @@ const drawing = () => {
   // 初始数据渲染完成 开始监听dom
   Listening();
   // 触发字幕更新
-  if (localStorage.getItem('video') === 'true') {
+  if (video.paused) {
     clearTimeout(window.timing);
     highlighted();
   }
@@ -127,6 +124,7 @@ const drawing = () => {
 const Listening = () => {
   // 给所有的时间添加方法 点击跳转录音到对应时间
   for (let item of DomClass('table').children) {
+    item.children[0].onclick = () => suspended();
     item.children[1].onclick = e => audioTime(e.target.innerHTML);
     item.children[2].onclick = e => audioTime(e.target.innerHTML);
     item.children[3].onfocus = e => {
@@ -143,7 +141,7 @@ const Listening = () => {
         let dataId = parseInt(e.target.dataset.id);
         // 当前数据的值
         let currentData = e.target.value;
-
+        // 监听所有input文字修改
         // 合并
         if (keyboard && keyboard.keyCode === 8 && keyStart === 0 && dataId - 1 !== 0 &&
           // 如果input值为空 或者 删除内容的开始到结尾的长度不等于内容长度
@@ -162,12 +160,10 @@ const Listening = () => {
           // 删除当前数据
           set.splice(dataId - 1, 1);
           drawing(set);
-        }
-
-        // 换行
-        if (keyboard && keyboard.keyCode === 13 && textlength !== 0 && keyStart !== 0 && keyStart !== textlength) {
+          return false;
+        } else if (keyboard && keyboard.keyCode === 13 && textlength !== 0 && keyStart !== 0 && keyStart !== textlength) {
           // 光标距离最后一个字的距离
-          let distance = textlength - keyStart;
+          // let distance = textlength - keyStart;
           // 开始时间
           let timeStart = conversion(set[dataId - 1].start) * 1000;
           // 结束时间
@@ -177,7 +173,7 @@ const Listening = () => {
           // 第一行文字 用时占比
           let stertProportion = parseInt(keyStart / textlength * time);
           // 第二行文字 用时占比
-          let endProportion = parseInt(distance / textlength * time);
+          // let endProportion = parseInt(distance / textlength * time);
           // 时间分割
           let timeRes = newTime(timeStart, stertProportion);
           // 光标之前的文字
@@ -198,18 +194,24 @@ const Listening = () => {
           };
           set.splice(dataId, 0, newArrData);
           drawing();
+          return false;
+        } else {
+          // 单纯修改文本 定时器可以解决input在中文输入时 出现value拿到的值是拼音的问题
+          setTimeout(() => {
+            set[dataId - 1].text = e.target.value;
+          }, 100);
         }
       };
     };
-    // input失去焦点 清空键盘事件 发新的数据传给数据提交方法
+    // input失去焦点
     item.children[3].onblur = () => {
+      // 清空键盘事件 发新的数据传给数据提交方法
       document.onkeydown = event => {
-        let keyboard = event || window.event;
-        if (keyboard && keyboard.keyCode === 8) {
-        }
-        if (keyboard && keyboard.keyCode === 13) {
-        }
+        // let keyboard = event || window.event;
+        // if (keyboard && keyboard.keyCode === 8 || keyboard && keyboard.keyCode === 13) {
+        // }
       };
+      // 存储当前行的数据
       dataSubmit();
     }
   }
@@ -221,19 +223,16 @@ const Listening = () => {
 // ajax 数据提交
 const dataSubmit = () => {
   if (set) {
+    console.log(set)
     // 获取数据的id 请求数据
     let str = {
       id: DomClass('table').dataset.id,
       data: set
     };
-    DomId('btn').onclick = () => {
-      ajax(JSON.stringify(str), dataSubmitUrl, res => {
-        let data = JSON.parse(res);
-        if (data.state) {
-          console.log(data.msg);
-        }
-      });
-    }
+    DomId('btn').onclick = () => ajax(JSON.stringify(str), dataSubmitUrl, res => {
+      let data = JSON.parse(res);
+      data.success ? helpblock('提示：', data.message, 'info') : helpblock('错误：', data.message, 'error');
+    });
   }
 };
 
@@ -260,3 +259,4 @@ const highlighted = () => {
     }
   }, 500)
 };
+

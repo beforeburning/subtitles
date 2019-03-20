@@ -66,31 +66,35 @@
     }
 
     /*页面样式*/
-    .content {width: 800px;margin: 50px auto;overflow: hidden}
+    .content {width: 100%;overflow: hidden}
 
     .table, .audio, #audio, #video, .btn {float: left;width: 100%;}
 
-    .table {border: 1px solid #ddd;margin-top: 30px;box-sizing: border-box}
+    #video {width: 80%;margin-left: 10%;}
 
-    .line {float: left;width: 100%;height: 40px;line-height: 40px;border-bottom: 1px solid #ddd}
+    .table {border: 1px solid #ddd;margin-top: 30px;box-sizing: border-box;max-height: 700px;overflow-y: scroll}
+
+    .line {float: left;width: 100%;height: 40px;line-height: 40px;border-bottom: 1px dotted #e2e2e2}
 
     .line:last-child {border-bottom: 0}
 
-    .serial {float: left;width: 5%;text-align: center;}
+    .serial {float: left;width: 5%;text-align: center;cursor: pointer}
 
     .start {float: left;width: 15%;cursor: pointer}
 
     .end {float: left;width: 15%;cursor: pointer}
 
-    .text {float: left;width: 65%;line-height: 40px;height: 40px;}
+    .text {float: left;width: 65%;line-height: 39px;height: 39px;}
 
     .btn {margin-top: 30px;}
 
-    #btn {float: right;width: 80px;height: 40px;font-size: 16px;background: #3ca3f7;border: 0;color: white;border-radius: 5px;cursor: pointer}
+    #btn {float: right;width: 80px;height: 40px;font-size: 16px;background: #3ca3f7;border: 0;color: white;border-radius: 5px;cursor: pointer;}
 
-    .highlighted {background: yellow}
+    #btn1 {float: right;width: 100px;height: 40px;font-size: 16px;background: orange;border: 0;color: white;border-radius: 5px;cursor: pointer;margin-left: 30px}
 
-    .highlighted input {background: yellow}
+    .highlighted {background: #ebf4fd;color: #5690ef }
+
+    .highlighted input {background: #ebf4fd;color: #5690ef }
 </style>
 
 <div class="loading">
@@ -111,13 +115,20 @@
     </div>
     <div class="table" data-id="1"></div>
     <div class="btn">
-      <button id="btn">提交</button>
+      <button id="btn1">审核结束</button>
+      <button id="btn">保存</button>
     </div>
 </div>
 <script>
+  function helpblock() {
+    // 线上其他JS的弹框方法 上线前请删除此方法
+    console.log(true);
+  }
+
   var dataAjaxUrl = './php/demo.php';
   var dataSubmitUrl = './php/dataSubmit.php';
 </script>
 <script src="./js/index.min.js"></script>
+<!--<script src="./script/index.js"></script>-->
 </body>
 </html>
