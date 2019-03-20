@@ -11,6 +11,8 @@ input输入框中间部分 按回车键  会讲当前数据分割为两条 并�
 
 代码全部以ES6标准实现  通过gulp打包为ES5  
 
+![demo图](https://github.com/loveburning/subtitles/blob/master/images/demo.png)
+
 ****
 
 本代码由JS小菜狗制作 
