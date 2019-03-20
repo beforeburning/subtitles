@@ -114,7 +114,7 @@ const drawing = () => {
   // 初始数据渲染完成 开始监听dom
   Listening();
   // 触发字幕更新
-  if (video.paused) {
+  if (!video.paused) {
     clearTimeout(window.timing);
     highlighted();
   }
@@ -142,9 +142,8 @@ const Listening = () => {
         // 当前数据的值
         let currentData = e.target.value;
         // 监听所有input文字修改
-        // 合并
         if (keyboard && keyboard.keyCode === 8 && keyStart === 0 && dataId - 1 !== 0 &&
-          // 如果input值为空 或者 删除内容的开始到结尾的长度不等于内容长度
+          // 合并 如果input值为空 或者 删除内容的开始到结尾的长度不等于内容长度
           (textlength === 0 || keyEnd - keyStart !== textlength)) {
           // 上一条数据的input value值
           let prevData = e.path[1].previousElementSibling.children[3].value;
@@ -161,7 +160,9 @@ const Listening = () => {
           set.splice(dataId - 1, 1);
           drawing(set);
           return false;
-        } else if (keyboard && keyboard.keyCode === 13 && textlength !== 0 && keyStart !== 0 && keyStart !== textlength) {
+        }
+        // 换行
+        if (keyboard && keyboard.keyCode === 13 && textlength !== 0 && keyStart !== 0 && keyStart !== textlength) {
           // 光标距离最后一个字的距离
           // let distance = textlength - keyStart;
           // 开始时间
@@ -195,14 +196,15 @@ const Listening = () => {
           set.splice(dataId, 0, newArrData);
           drawing();
           return false;
-        } else {
-          // 单纯修改文本 定时器可以解决input在中文输入时 出现value拿到的值是拼音的问题
-          setTimeout(() => {
-            set[dataId - 1].text = e.target.value;
-          }, 100);
         }
       };
     };
+
+    // 监听input值改变
+    item.children[3].oninput = e => {
+      set[parseInt(e.target.dataset.id) - 1].text = e.target.value;
+    };
+
     // input失去焦点
     item.children[3].onblur = () => {
       // 清空键盘事件 发新的数据传给数据提交方法
@@ -223,7 +225,6 @@ const Listening = () => {
 // ajax 数据提交
 const dataSubmit = () => {
   if (set) {
-    console.log(set)
     // 获取数据的id 请求数据
     let str = {
       id: DomClass('table').dataset.id,
